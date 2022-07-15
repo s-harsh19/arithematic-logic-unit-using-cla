@@ -1,0 +1,22 @@
+module testb();
+  reg[3:0]a;
+  reg[3:0]b;
+  wire[3:0]out;
+  reg[1:0]oprn;
+  reg mode;
+  reg cin;
+  wire cout;
+  alu uut(a[3:0],b[3:0],cin,cout,out[3:0],oprn[1:0],mode);
+  initial begin
+    $dumpfile("dump.vcd"); $dumpvars;
+    $monitor("a-%b b-%b cin-%b cout-%b out-%b",a[3:0],b[3:0],cin,cout,out[3:0]);cin=1;
+    a=4'b1001;b=4'b1100;mode=0;oprn=2'b00;
+   #10 a=4'b1001;b=4'b1100;mode=1;oprn=2'b00;cin=1;
+   #10  a=4'b1001;b=4'b1100;mode=0;oprn=2'b01;cin=1;
+    #10 a=4'b1001;b=4'b1100;mode=1;oprn=2'b01;cin=1;
+   #10  a=4'b1001;b=4'b1100;mode=0;oprn=2'b10;cin=1;
+    #10  a=4'b1001;b=4'b1100;mode=1;oprn=2'b10;cin=1;
+    #10  a=4'b1001;b=4'b1100;mode=0;oprn=2'b11;cin=1;
+    #10  a=4'b1001;b=4'b1100;mode=1;oprn=2'b11;cin=1;
+  end
+endmodule

@@ -1,0 +1,87 @@
+module cla(
+    input [3:0] a,
+    input [3:0] b,
+    input cin,
+    output [3:0] carry
+    );
+    wire[4:0]c;
+    assign c[0]=cin;
+   assign carry[3:0]=c[4:1];
+   genvar i;
+    generate
+    for(i=0;i<=3;i=i+1)
+    begin
+    assign c[i+1]=(c[i]&a[i]^b[i])|(a[i]&b[i]);//carry gen and propogate
+    end
+    endgenerate
+endmodule
+
+module alu(
+    input [3:0]a,
+    input [3:0]b,
+    input cin,
+    output reg cout,
+    output reg [3:0]out,
+    input [1:0] oprn,//operation
+    input mode//mode within operation
+    );
+    wire[3:0]carry;
+    cla c1(a,b,cin,carry);
+    integer i;
+    always@(*)
+    begin
+    case(oprn)
+    2'b00:begin//arithmetic
+    if(mode==1)//add
+    begin 
+    cout=carry[3];
+    out[0]=a[0]+b[0]+cin;
+    for(i=1;i<=3;i=i+1)
+    begin
+    out[i]=a[i]+b[i]+carry[i-1];
+    end
+    end
+    else//subtract
+    begin
+    {cout,out}=a-b;
+    end
+    end
+    2'b01:begin
+    if(mode==1)//and
+    begin
+    out=a&b;
+    end
+   else
+   begin
+   out=a|b;//or
+   end
+   end
+   2'b10:begin
+    if(mode==1)//logical right
+    begin
+    out=a>>1;
+    end
+   else
+   begin
+   out=a<<1;//logical left
+   end
+   end
+   
+    2'b11:begin
+      if(mode==1)//xor
+    begin
+    out=a^b;
+    end
+   else
+   begin
+     out=~(a^b);//xnor
+   end
+   end
+   default: begin
+   out=0;
+   cout=0;
+   end
+    endcase
+    end 
+    
+endmodule
